@@ -14,9 +14,11 @@
     "url": "https://github.com/avjabalpur/xcd-pdf"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "bluebird": "^3.5.0",
     "lodash": "^4.17.4",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "pdf2json": "^1.1.7"
   },
   "devDependencies": {
     "mocha": ">=1.21.4",
