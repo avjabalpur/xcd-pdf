@@ -22,7 +22,9 @@ function getTextCordinates(option, error, next){
 		  });
 		  pdfParser.on("pdfParser_dataReady", function (pdfData){
 		   var pageNumber = 0;
+
 		   _.map(_.get(pdfData, 'formImage.Pages'), function(page){
+		   	  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', page)
 		   	var obj = {
 		   		page : ++pageNumber,
 		   		texts : []
@@ -30,7 +32,7 @@ function getTextCordinates(option, error, next){
 		   	_.forEach(_.get(page, 'Texts'), function(text){
 		   		var item = text;
       			item.text = decodeURIComponent(_.get(_.first(_.get(item, 'R')), 'T'));
-      			if(_.get(option,'text').indexOf(item.text)>0)
+      			if(_.get(option,'text').indexOf(item.text)>-1)
       			{
       				obj.texts.push(item);
       			}
@@ -40,7 +42,6 @@ function getTextCordinates(option, error, next){
 		   next(null, itemPromiss)
 		  });
 		  pdfParser.loadPDF(_.get(option, 'pdfFile'), 1);
-
 	}
 }
 
