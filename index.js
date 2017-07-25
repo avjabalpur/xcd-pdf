@@ -8,6 +8,7 @@ var async = require('async');
 function XcdPdf(options){
  this.options = options || {};
  this.getTextCordinates = _.partial(logValue, _, getTextCordinates, _);
+ this.validateText = _.partial(logValue, _, validateText, _);
 }
 
 function getTextCordinates(option, error, next){
@@ -15,7 +16,7 @@ function getTextCordinates(option, error, next){
 		return next(error, null);	
 	}
 	else {
-		var itemPromiss = [];
+		var items = [];
 		var pdfParser = new PDFParser();
 		  pdfParser.on("pdfParser_dataError", function(error){
 		  	next(error, null)
@@ -24,7 +25,6 @@ function getTextCordinates(option, error, next){
 		   var pageNumber = 0;
 
 		   _.map(_.get(pdfData, 'formImage.Pages'), function(page){
-		   	  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', page)
 		   	var obj = {
 		   		page : ++pageNumber,
 		   		texts : []
@@ -37,13 +37,49 @@ function getTextCordinates(option, error, next){
       				obj.texts.push(item);
       			}
 		   	})
-		   	itemPromiss.push(obj)
+		   	items.push(obj)
 		   })
-		   next(null, itemPromiss)
+		   next(null, items)
 		  });
 		  pdfParser.loadPDF(_.get(option, 'pdfFile'), 1);
 	}
 }
+
+
+function validateText(option, error, next){
+	if(error){
+		return next(error, null);	
+	}
+	else {
+		var items = [];
+		var pdfParser = new PDFParser();
+		  pdfParser.on("pdfParser_dataError", function(error){
+		  	next(error, null)
+		  });
+		  pdfParser.on("pdfParser_dataReady", function (pdfData){
+		   var pageNumber = 0;
+
+		   _.map(_.get(pdfData, 'formImage.Pages'), function(page){
+		   	var obj = {
+		   		page : ++pageNumber,
+		   		text : {}
+		   	}
+		   	_.forEach(_.get(page, 'Texts'), function(text){
+		   		var item = text;
+      			item.text = decodeURIComponent(_.get(_.first(_.get(item, 'R')), 'T'));
+      			if(_.get(option,'text').indexOf(item.text)>-1)
+      			{
+      				obj.texts.push(item);
+      			}
+		   	})
+		   	items.push(obj)
+		   })
+		   next(null, items)
+		  });
+		  pdfParser.loadPDF(_.get(option, 'pdfFile'), 1);
+	}
+}
+
 
 
 function logValue(option, handler, callback){
