@@ -16,6 +16,7 @@
   "dependencies": {
     "async": "^2.5.0",
     "bluebird": "^3.5.0",
+    "hummus": "^1.0.77",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
     "pdf2json": "^1.1.7"
