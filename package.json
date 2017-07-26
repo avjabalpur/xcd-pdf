@@ -1,6 +1,6 @@
 {
   "name": "xcd-pdf",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A simple application for manuplating the pdf for Node.js.",
   "main": "./module.js",
   "authors": [
