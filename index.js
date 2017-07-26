@@ -1,9 +1,6 @@
 var _ = require('lodash');
-var promiss = require('bluebird');
 var fs = require('fs');
 var path = require('path');
-var PDFParser = require("pdf2json/pdfparser");
-var async = require('async');
 var hummus = require('hummus');
 var extractText = require('./lib/text-extraction');
 
@@ -18,34 +15,32 @@ function getTextCordinates(option, error, next){
 		return next(error, null);	
 	}
 	else {
-		var items = [];
-		var pdfParser = new PDFParser();
-		  pdfParser.on("pdfParser_dataError", function(error){
-		  	next(error, null)
-		  });
-		  pdfParser.on("pdfParser_dataReady", function (pdfData){
-		   var pageNumber = 0;
 
-		   _.map(_.get(pdfData, 'formImage.Pages'), function(page){
-		   	var obj = {
-		   		page : ++pageNumber,
-		   		texts : []
-		   	}
+		var pdfReader = hummus.createReader(_.get(option,'pdfFile'));
+		var pagesPlacements = extractText(pdfReader);
+		var item =[];
 
+		for(var i=0;i<pagesPlacements.length;++i) {
+        	var obj ={};
+        	
+	        pagesPlacements[i].forEach((placement)=> {
 
-		   	_.forEach(_.get(page, 'Texts'), function(text){
-		   		var item = text;
-      			item.text = decodeURIComponent(_.get(_.first(_.get(item, 'R')), 'T'));
-      			if(_.get(option,'text').indexOf(item.text)>-1)
-      			{
-      				obj.texts.push(item);
-      			}
-		   	})
-		   	items.push(obj)
-		   })
-		   next(null, items)
-		  });
-		  pdfParser.loadPDF(_.get(option, 'pdfFile'), 1);
+	        	if(_.get(option,'text').indexOf(placement.text)>-1)
+	  			{
+	        		obj = {
+	        			coordLeft:placement.globalBBox[0],
+	        			coordBottom:placement.globalBBox[1],
+	        			coordRight:placement.globalBBox[2],
+	        			coordTop:placement.globalBBox[3],
+	        			pageNumber : (i+1),
+	        			placeHolder: placement.text
+	        		}
+	        		item.push(obj);				        
+	  			}
+	        });
+		}
+
+		next(null,item)
 	}
 }
 
@@ -58,7 +53,7 @@ function changeTextColor(option, error, next){
 		var pdfReader = hummus.createReader(_.get(option,'pdfFile'));
 		var pagesPlacements = extractText(pdfReader);
 		var pdfWriter = hummus.createWriterToModify(_.get(option,'pdfFile'), {
-			modifiedFilePath:'./test_out1.pdf'
+			modifiedFilePath: option.outputFile
 		});
 
 		for(var i=0;i<pagesPlacements.length;++i) {
