@@ -1,6 +1,6 @@
 {
   "name": "xcd-pdf",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple application for manuplating the pdf for Node.js.",
   "main": "./index.js",
   "authors": [
@@ -14,12 +14,10 @@
     "url": "https://github.com/avjabalpur/xcd-pdf"
   },
   "dependencies": {
-    "async": "^2.5.0",
     "bluebird": "^3.5.0",
     "hummus": "^1.0.77",
     "lodash": "^4.17.4",
-    "path": "^0.12.7",
-    "pdf2json": "^1.1.7"
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "mocha": ">=1.21.4",
