@@ -1,8 +1,8 @@
 {
   "name": "xcd-pdf",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple application for manuplating the pdf for Node.js.",
-  "main": "./index.js",
+  "main": "index.js",
   "authors": [
     {
       "name": "Amit Vishwakarma",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
-    "hummus": "^1.0.77",
+    "hummus": "1.0.75",
     "lodash": "^4.17.4",
     "path": "^0.12.7"
   },
@@ -30,7 +30,9 @@
     "pdfxcd",
     "pdfconvertor",
     "pdftext",
-    "pdfimages"
+    "pdfimages",
+    "pdf-text-color",
+    "pdf-text-cordinates"
   ],
   "scripts": {}
 }

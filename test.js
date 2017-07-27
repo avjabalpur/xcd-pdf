@@ -4,9 +4,10 @@ var xcdPdf = new XcdPdf();
 var option = {
 	pdfFile : './response.pdf',
 	outputFile : './output.pdf',
-	text : ['{{SS:#1:signature}}', '1/1/1800','1.Patient\'s HI Claim No.'],
+	text : ['{{SS:#1:signature}}'],
 	color : 'Red'
 }
+
 
 xcdPdf.getTextCordinates(option, function(err, data){
 	console.log(err, JSON.stringify(data))
