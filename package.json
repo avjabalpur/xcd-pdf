@@ -32,7 +32,7 @@
     "pdftext",
     "pdfimages",
     "pdf-text-color",
-    "pdf-text-cordinates"
+    "pdf-texts-cordinates"
   ],
   "scripts": {}
 }
