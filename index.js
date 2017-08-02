@@ -57,21 +57,22 @@ function changeTextColor(option, error, next){
 		});
 
 		for(var i=0;i<pagesPlacements.length;++i) {
-        var pageModifier = new hummus.PDFPageModifier(pdfWriter,i);
-		var cxt = pageModifier.startContext().getContext();
-        pagesPlacements[i].forEach((placement)=> {
+	        var pageModifier = new hummus.PDFPageModifier(pdfWriter,i);
+			var cxt = pageModifier.startContext().getContext();
+	        pagesPlacements[i].forEach((placement)=> {
 
-        	if(_.get(option,'text').indexOf(placement.text)>-1)
-  			{
-                cxt.q();
-                cxt.cm.apply(cxt, _.get(placement,'matrix'));
-                cxt.drawRectangle(_.nth(_.get(placement, 'localBBox'), 0),_.nth(_.get(placement, 'localBBox'), 1),_.nth(_.get(placement, 'localBBox'), 2)-_.nth(_.get(placement, 'localBBox'), 0),_.nth(_.get(placement, 'localBBox'), 3)-_.nth(_.get(placement, 'localBBox'), 1),{color:_.get(option,'color') || 'Red', width:8});
-                cxt.Q();
-  			}
-        });
-		pageModifier.endContext().writePage();
-    }
-    pdfWriter.end()
+	        	if(_.get(option,'text').indexOf(placement.text)>-1)
+	  			{
+	                cxt.q();
+	                cxt.cm.apply(cxt, _.get(placement,'matrix'));
+	                cxt.drawRectangle(_.nth(_.get(placement, 'localBBox'), 0),_.nth(_.get(placement, 'localBBox'), 1),_.nth(_.get(placement, 'localBBox'), 2)-_.nth(_.get(placement, 'localBBox'), 0),_.nth(_.get(placement, 'localBBox'), 3)-_.nth(_.get(placement, 'localBBox'), 1),{color:_.get(option,'color') || 'Red', width:8});
+	                cxt.Q();
+	  			}
+	        });
+			pageModifier.endContext().writePage();
+	    }
+	    pdfWriter.end();
+	    next(null, option.outputFile)
 	}
 }
 
