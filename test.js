@@ -16,3 +16,8 @@ xcdPdf.getTextCordinates(option, function(err, data){
 xcdPdf.changeTextColor(option, function(err, data){
 	console.log(err, JSON.stringify(data))
 });
+
+xcdPdf.getPageDetails(option, function(err, data){
+	console.log(err, JSON.stringify(data))
+});
+

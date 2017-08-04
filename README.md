@@ -47,7 +47,19 @@ To update with latest version:
 	});
 
 ````
+// Get the pdf details
+````javascript
+	var XcdPdf = require('./index.js');
+	var xcdPdf = new XcdPdf();
+	var option = {
+		pdfFile : './response.pdf'
+	}
 
+	xcdPdf.getPageDetails(option, function(err, data){
+		console.log(err, JSON.stringify(data))
+	});
+
+````
 
 
 

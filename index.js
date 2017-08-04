@@ -8,6 +8,7 @@ function XcdPdf(options){
  this.options = options || {};
  this.getTextCordinates = _.partial(logValue, _, getTextCordinates, _);
  this.changeTextColor = _.partial(logValue, _, changeTextColor, _);
+ this.getPageDetails = _.partial(logValue, _, getPageDetails, _);
 }
 
 function getTextCordinates(option, error, next){
@@ -19,27 +20,24 @@ function getTextCordinates(option, error, next){
 		var pdfReader = hummus.createReader(_.get(option,'pdfFile'));
 		var pagesPlacements = extractText(pdfReader);
 		var item =[];
-
-		for(var i=0;i<pagesPlacements.length;++i) {
-        	var obj ={};
-        	
-	        pagesPlacements[i].forEach((placement)=> {
-
-	        	if(_.get(option,'text').indexOf(placement.text)>-1)
-	  			{
-	        		obj = {
-	        			coordLeft:placement.globalBBox[0],
-	        			coordBottom:placement.globalBBox[1],
-	        			coordRight:placement.globalBBox[2],
-	        			coordTop:placement.globalBBox[3],
-	        			pageNumber : (i+1),
-	        			placeHolder: placement.text
-	        		}
-	        		item.push(obj);				        
-	  			}
-	        });
-		}
-
+		_.range(0, pagesPlacements.length)
+		.map(function(p){
+			var obj ={};
+			_.nth(pagesPlacements, p).forEach((placement)=> {
+				if(_.get(option,'text').indexOf(placement.text)>-1)
+				{
+					_.extend(obj, {
+						coordLeft : _.nth(_.get(placement, 'globalBBox'), 0),
+	        			coordBottom : _.nth(_.get(placement, 'globalBBox'), 1),
+	        			coordRight : _.nth(_.get(placement, 'globalBBox'), 2),
+	        			coordTop : _.nth(_.get(placement, 'globalBBox'), 3),
+	        			pageNumber : p,
+	        			placeHolder : _.get(placement,'text')
+					})
+	        		item.push(obj);
+				}
+			})
+		})
 		next(null,item)
 	}
 }
@@ -56,11 +54,10 @@ function changeTextColor(option, error, next){
 			modifiedFilePath: option.outputFile
 		});
 
-		for(var i=0;i<pagesPlacements.length;++i) {
-	        var pageModifier = new hummus.PDFPageModifier(pdfWriter,i);
+		for(var i = 0; i < pagesPlacements.length; ++i) {
+	        var pageModifier = new hummus.PDFPageModifier(pdfWriter, i);
 			var cxt = pageModifier.startContext().getContext();
 	        pagesPlacements[i].forEach((placement)=> {
-
 	        	if(_.get(option,'text').indexOf(placement.text)>-1)
 	  			{
 	                cxt.q();
@@ -73,6 +70,32 @@ function changeTextColor(option, error, next){
 	    }
 	    pdfWriter.end();
 	    next(null, option.outputFile)
+	}
+}
+
+function getPageDetails(option, error, next){
+	if(error){
+		return next(error, null);	
+	}
+	else {
+		var pages =[];
+		var pdfReader = hummus.createReader(_.get(option,'pdfFile'));
+		var pageCount = pdfReader.getPagesCount();
+		_.range(0, pageCount).map(
+			function(p){
+				var pageInfo =  pdfReader.parsePage(p);
+				pages.push({
+					number : p,
+					mediaBox : pageInfo.getMediaBox(),
+					cropBox : pageInfo.getCropBox(),
+					trimBox : pageInfo.getTrimBox(),
+					bleedBox : pageInfo.getBleedBox(),
+					artBox : pageInfo.getArtBox(),
+					height : _.nth(pageInfo.getMediaBox(), 3),
+					width : _.nth(pageInfo.getMediaBox(), 2),
+				})
+			})
+		next(null,pages)
 	}
 }
 
