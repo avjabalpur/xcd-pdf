@@ -20,24 +20,27 @@ function getTextCordinates(option, error, next){
 		var pdfReader = hummus.createReader(_.get(option,'pdfFile'));
 		var pagesPlacements = extractText(pdfReader);
 		var item =[];
-		_.range(0, pagesPlacements.length)
-		.map(function(p){
-			var obj ={};
-			_.nth(pagesPlacements, p).forEach((placement)=> {
-				if(_.get(option,'text').indexOf(placement.text)>-1)
-				{
-					_.extend(obj, {
-						coordLeft : _.nth(_.get(placement, 'globalBBox'), 0),
+
+		for(var i= 0; i < pagesPlacements.length; ++i) {
+         	var obj ={};
+         	
+ 	        pagesPlacements[i].forEach((placement)=> {
+ 
+ 	        	if(_.get(option,'text').indexOf(placement.text)>-1)
+ 	  			{
+ 	        		obj = {
+ 	        			coordLeft : _.nth(_.get(placement, 'globalBBox'), 0),
 	        			coordBottom : _.nth(_.get(placement, 'globalBBox'), 1),
 	        			coordRight : _.nth(_.get(placement, 'globalBBox'), 2),
 	        			coordTop : _.nth(_.get(placement, 'globalBBox'), 3),
-	        			pageNumber : p,
-	        			placeHolder : _.get(placement,'text')
-					})
-	        		item.push(obj);
-				}
-			})
-		})
+ 	        			pageNumber : (i+1),
+ 	        			placeHolder : _.get(placement,'text')
+ 	        		}
+ 	        		item.push(obj);				        
+ 	  			}
+ 	        });
+ 		}
+
 		next(null,item)
 	}
 }
@@ -58,7 +61,7 @@ function changeTextColor(option, error, next){
 	        var pageModifier = new hummus.PDFPageModifier(pdfWriter, i);
 			var cxt = pageModifier.startContext().getContext();
 	        pagesPlacements[i].forEach((placement)=> {
-	        	if(_.get(option,'text').indexOf(placement.text)>-1)
+	        	if(_.get(option,'text').indexOf(placement.text) >- 1)
 	  			{
 	                cxt.q();
 	                cxt.cm.apply(cxt, _.get(placement,'matrix'));
@@ -85,7 +88,7 @@ function getPageDetails(option, error, next){
 			function(p){
 				var pageInfo =  pdfReader.parsePage(p);
 				pages.push({
-					number : p,
+					pageNumber : (p + 1),
 					mediaBox : pageInfo.getMediaBox(),
 					cropBox : pageInfo.getCropBox(),
 					trimBox : pageInfo.getTrimBox(),

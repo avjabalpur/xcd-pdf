@@ -4,7 +4,7 @@ var xcdPdf = new XcdPdf();
 var option = {
 	pdfFile : './response.pdf',
 	outputFile : './output.pdf',
-	text : ['{{SS:#1:signature}}'],
+	text : ['{{SS:#1:signature}}','1/1/1800'],
 	color : 'Red'
 }
 
